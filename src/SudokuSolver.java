@@ -1,32 +1,112 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 
 public class SudokuSolver {
 
+	static final int INVALID = 0;
+	static final int SINGLE_PROBLEM = 1;
+	static final int ALL = 2;
+	static final int EXIT = 3;
+	
+	static final String ALL_STRING = "ALL";
+	static final String EXIT_STRING = "Q";
+	
 	int[][] matrix = new int[9][9];
 	BufferedReader br = null;
 	
 	public static void main(String[] args) {
-		
+		boolean shouldExit = false;
 		SudokuSolver sudoku = new SudokuSolver();
-		
-		final long start = System.nanoTime();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		 
+		System.out.println("Welcome to the Sudoku Solver powered by a Brute Force algorithm");
+		  
+		try {
+			while(!shouldExit) {
+				System.out.println("Please enter 81 digits that represent the Sudoku puzzle, or ALL to run over all 10,000 problems, or Q to quit:");
+				String line = reader.readLine();
+				
+				switch(validateInput(line)) {
+				case INVALID:
+					System.out.println("Invalid input");
+					break;
+				  case SINGLE_PROBLEM:
+					  sudoku.loadMatrixFromString(line);
+					  if(!sudoku.solve(0, 0)) {
+						  System.err.println("No solution for the given line. Please enter a new valid sudoku puzzle");
+					  } else {
+						  System.out.println(sudoku);
+					  }
+					  break;
+				  case ALL:
+					  sudoku.setFilePath("C:\\temp\\5.txt");
+					  final long start = System.nanoTime();
+					  int lineNumber = 0;
+					  while ((line = sudoku.getNextLine()) != null) {
+						  sudoku.loadMatrixFromString(line);
+						  if(!sudoku.solve(0, 0)) {
+							  System.err.println("No solution for the line " + lineNumber);
+						  }
+						  lineNumber++;
+						  System.out.println("Finished line " + lineNumber);
+						  //lp.writeLp("modelSpecific"+x+".lp");
+					  }
+					  final long end = System.nanoTime();
+					  System.out.println("finished in " + formatTime(end - start));
+					  sudoku.closeFile();
+					  break;
+				  case EXIT:
+					  shouldExit = true;
+					  break;
+			}
+				
 
-		sudoku.setFilePath("C:\\temp\\5.txt");
-		String line = null;
-		while((line = sudoku.getNextLine()) != null){
-			sudoku.loadMatrixFromString(line);
-			//System.out.println(sudoku);
-			sudoku.solve(0, 0);
-			//System.out.println(sudoku);
-			break;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		final long end = System.nanoTime();
-		sudoku.closeFile();
-		System.out.println(formatTime(end - start));
+
+		  
+		System.out.println("Thanks for using our Brute Force Sudoku solver!");
+
 	}
+	
+	private static int validateInput(String line) {
+		  if(line == null) {
+			  return INVALID;
+		  }
+			
+		  if(line.length() == 1) {
+			  if(line.toUpperCase().contains(EXIT_STRING)) {
+				  return EXIT;
+			  } else {
+				  return INVALID;
+			  }
+		  }
+			
+		  if(line.length() == 3) {
+			  if(line.toUpperCase().contains(ALL_STRING)) {
+				  return ALL;
+			  } else {
+				  return INVALID;
+			  }
+		  }
+			
+		  if (line.length() != 81) {
+			  return INVALID;
+		  }
+		  char[] arr = line.toCharArray();
+		  for(int i = 0; i < arr.length; i++) {
+			  if(arr[i] < '0' || arr[i] > '9') {
+				  return INVALID;
+			  }
+		  }
+			
+		  return SINGLE_PROBLEM;
+	  }
 	
 	private void closeFile() {
 		try {
@@ -125,9 +205,9 @@ public class SudokuSolver {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < matrix.length; i++) {
 			for (int j = 0; j < matrix[i].length; j++) {
-				sb.append(matrix[i][j] + " ");
+				sb.append(matrix[i][j]);
 			}
-			sb.append("\n");
+			//sb.append("\n");
 		}
 		return sb.toString();
 	}
