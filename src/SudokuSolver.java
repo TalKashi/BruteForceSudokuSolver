@@ -22,8 +22,7 @@ public class SudokuSolver {
 		SudokuSolver sudoku = new SudokuSolver();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		 
-		System.out.println("Welcome to the Sudoku Solver powered by a Brute Force algorithm");
-		  
+		System.out.println("Welcome to the Sudoku Solver powered by a Brute Force algorithm"); 
 		try {
 			while(!shouldExit) {
 				System.out.println("Please enter 81 digits that represent the Sudoku puzzle, or ALL to run over all 10,000 problems, or Q to quit:");
@@ -42,7 +41,7 @@ public class SudokuSolver {
 					  }
 					  break;
 				  case ALL:
-					  sudoku.setFilePath("C:\\temp\\5.txt");
+					  sudoku.setFilePath("5.txt");
 					  final long start = System.nanoTime();
 					  int lineNumber = 0;
 					  while ((line = sudoku.getNextLine()) != null) {
@@ -52,7 +51,6 @@ public class SudokuSolver {
 						  }
 						  lineNumber++;
 						  System.out.println("Finished line " + lineNumber);
-						  //lp.writeLp("modelSpecific"+x+".lp");
 					  }
 					  final long end = System.nanoTime();
 					  System.out.println("finished in " + formatTime(end - start));
@@ -61,15 +59,11 @@ public class SudokuSolver {
 				  case EXIT:
 					  shouldExit = true;
 					  break;
-			}
-				
-
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-
-		  
+		} 
 		System.out.println("Thanks for using our Brute Force Sudoku solver!");
 
 	}
@@ -207,7 +201,6 @@ public class SudokuSolver {
 			for (int j = 0; j < matrix[i].length; j++) {
 				sb.append(matrix[i][j]);
 			}
-			//sb.append("\n");
 		}
 		return sb.toString();
 	}
